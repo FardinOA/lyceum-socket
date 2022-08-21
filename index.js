@@ -35,7 +35,6 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     // comment
     socket.on("postAComment", (data) => {
-        console.log(data);
         socket.emit("receiveAComment", data);
     });
 
