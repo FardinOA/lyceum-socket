@@ -32,14 +32,51 @@ const io = new Server(server, {
     },
 });
 
+let users = [];
+
+const addUser = (userId, socketId) => {
+    !users.some((user) => user.userId === userId) &&
+        users.push({ userId, socketId });
+};
+const removeUser = (socketId) => {
+    users = users.filter((user) => user.socketId !== socketId);
+};
+
+const getUser = (userId) => {
+    return users.find((user) => user.userId === userId);
+};
+
 io.on("connection", (socket) => {
+    console.log("userConnected");
+
+    socket.on("addUser", (userId) => {
+        console.log(userId);
+        addUser(userId, socket.id);
+    });
     // comment
-    socket.on("postAComment", (data) => {
-        socket.emit("receiveAComment", data);
+    socket.on("postAComment", async (data) => {
+        const user = getUser(data.receiverId);
+        const user2 = getUser(data.senderId);
+        if (user.socketId == user2.socketId) {
+            await io.to(user.socketId).emit("receiveAComment", data);
+        } else {
+            await io.to(user.socketId).emit("receiveAComment", data);
+            await io.to(user2.socketId).emit("receiveAComment", data);
+        }
     });
 
-    socket.on("send_message", (data) => {
-        socket.to(data.room).emit("receive_message", data);
+    // socket.on("send_message", (data) => {
+    //     socket.to(data.room).emit("receive_message", data);
+    // });
+
+    socket.on("commentNotification", (data) => {
+        const user = getUser(data.receiverId);
+        io.to(user.socketId).emit("getCommentNotification", data);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("disconnected");
+        removeUser(socket.id);
     });
 });
 
