@@ -54,14 +54,14 @@ io.on("connection", (socket) => {
         addUser(userId, socket.id);
     });
     // comment
-    socket.on("postAComment", async (data) => {
+    socket.on("postAComment", (data) => {
         const user = getUser(data.receiverId);
         const user2 = getUser(data.senderId);
         if (user.socketId == user2.socketId) {
-            await io.to(user.socketId).emit("receiveAComment", data);
+            io.to(user.socketId).emit("receiveAComment", data);
         } else {
-            await io.to(user.socketId).emit("receiveAComment", data);
-            await io.to(user2.socketId).emit("receiveAComment", data);
+            io.to(user.socketId).emit("receiveAComment", data);
+            io.to(user2.socketId).emit("receiveAComment", data);
         }
     });
 
