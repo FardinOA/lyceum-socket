@@ -27,7 +27,7 @@ const io = new Server(server, {
             "https://lyceum-frontend-fardinoa.vercel.app",
             "http://localhost:3000",
         ],
-        methods: ["GET", "POST"],
+        metods: ["GET", "POST"],
         credentials: true,
     },
 });
@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
             await io.to(user.socketId).emit("receiveAComment", data);
             await io.to(user2.socketId).emit("receiveAComment", data);
         }
-    });
+    });vhmn7
 
     // socket.on("send_message", (data) => {
     //     socket.to(data.room).emit("receive_message", data);
