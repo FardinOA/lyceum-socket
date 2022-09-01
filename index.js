@@ -57,13 +57,14 @@ io.on("connection", (socket) => {
     socket.on("postAComment", (data) => {
         const user = getUser(data.receiverId);
         const user2 = getUser(data.senderId);
-        if (user.socketId == user2.socketId) {
-            console.log("same user");
-            io.to(user.socketId).emit("receiveAComment", data);
-        } else {
-            console.log("different user");
-            io.to(user.socketId).emit("receiveAComment", data);
-            io.to(user2.socketId).emit("receiveAComment", data);
+
+        if (user) {
+            if (data.receiverId == data.senderId) {
+                io.to(user.socketId).emit("receiveAComment", data);
+            } else {
+                io.to(data.receiverId).emit("receiveAComment", data);
+                io.to(data.senderId).emit("receiveAComment", data);
+            }
         }
     });
 
@@ -73,7 +74,7 @@ io.on("connection", (socket) => {
 
     socket.on("commentNotification", (data) => {
         const user = getUser(data.receiverId);
-        io.to(user.socketId).emit("getCommentNotification", data);
+        if (user) io.to(user.socketId).emit("getCommentNotification", data);
     });
 
     socket.on("disconnect", () => {
