@@ -58,12 +58,15 @@ io.on("connection", (socket) => {
         const user = getUser(data.receiverId);
         const user2 = getUser(data.senderId);
 
-        if (user) {
-            if (data.receiverId == data.senderId) {
+        if (data.receiverId === data.senderId) {
+            io.to(user.socketId).emit("receiveAComment", data);
+        } else {
+            if (user2) {
+                io.to(user2.socketId).emit("receiveAComment", data);
+            }
+
+            if (user) {
                 io.to(user.socketId).emit("receiveAComment", data);
-            } else {
-                io.to(data.receiverId).emit("receiveAComment", data);
-                io.to(data.senderId).emit("receiveAComment", data);
             }
         }
     });
