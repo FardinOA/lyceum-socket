@@ -80,6 +80,20 @@ io.on("connection", (socket) => {
         if (user) io.to(user.socketId).emit("getCommentNotification", data);
     });
 
+    socket.on(
+        "sendMessage",
+        ({ senderId, receiverId, text, messageSender }) => {
+            const user = getUser(receiverId);
+
+            io.to(user.socketId).emit("getMessage", {
+                messageSender,
+                senderId,
+                text,
+                receiverId,
+            });
+        }
+    );
+
     socket.on("disconnect", () => {
         console.log("disconnected");
         removeUser(socket.id);
