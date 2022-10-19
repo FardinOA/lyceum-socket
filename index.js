@@ -93,7 +93,9 @@ io.on("connection", (socket) => {
             });
         }
     );
-
+    io.emit("getActiveUsers", {
+        activeUsers: users,
+    });
     socket.on("disconnect", () => {
         console.log("disconnected");
         removeUser(socket.id);
