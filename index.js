@@ -52,6 +52,12 @@ io.on("connection", (socket) => {
     socket.on("addUser", (userId) => {
         console.log(userId);
         addUser(userId, socket.id);
+        io.emit("getActiveUsers", {
+            activeUsers: users,
+        });
+        // io.emit("getActiveUsers", {
+        //     activeUsers: users,
+        // });
     });
     // comment
     socket.on("postAComment", (data) => {
@@ -93,15 +99,18 @@ io.on("connection", (socket) => {
             });
         }
     );
-    socket.on("requestActiveUser", () => {
-        io.emit("getActiveUsers", {
-            activeUsers: users,
-        });
-    });
+    // socket.on("requestActiveUser", () => {
+    //     io.emit("getActiveUsers", {
+    //         activeUsers: users,
+    //     });
+    // });
 
     socket.on("disconnect", () => {
         console.log("disconnected");
         removeUser(socket.id);
+        io.emit("getActiveUsers", {
+            activeUsers: users,
+        });
     });
 });
 
